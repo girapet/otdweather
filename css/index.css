@@ -1,8 +1,61 @@
 body {
+  font-family: Tahoma, Geneva, sans-serif;
   margin: 0;
 }
-#map {
+
+#bar {
+  position: absolute;
+  width: 100%;
+  height: 90px;
+  box-shadow: 0 0 5px #606060;
+  z-index: 1000;
+}
+
+.entry {
+  position: relative;
+  float: left;
+  width: 25%;
+  height: 100%;
+  border-left: solid 1px #A0A0A0;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: #FFFFE0;
+}
+
+.entry:first-child {
+  border-left: none;
+}
+
+.entry img {
+  position: absolute;
+  left: 0;
+  opacity: 0.2;
+  height: 100%;
+}
+
+.entry div {
   position: absolute;
   width: 100%;
   height: 100%;
+  text-align: center;
+  color: black;
+}
+
+.period {
+  font-size: 11px;
+}
+
+.temp {
+  font-size: 24px;
+}
+
+.cond, .wind {
+  font-size: 12px;
+}
+
+#map {
+  position: absolute;
+  width: 100%;
+  top: 90px;
+  bottom: 0px;;
 }
