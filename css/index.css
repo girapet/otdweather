@@ -6,56 +6,85 @@ body {
 #bar {
   position: absolute;
   width: 100%;
-  height: 90px;
-  box-shadow: 0 0 5px #606060;
+  height: 180px;
+  box-shadow: 0 0 8px #404040;
   z-index: 1000;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
 }
 
 .entry {
-  position: relative;
-  float: left;
-  width: 25%;
+  display: inline-block;
+  width: 33.333%;
   height: 100%;
   border-left: solid 1px #A0A0A0;
   box-sizing: border-box;
   overflow: hidden;
-  background-color: #FFFFE0;
+  text-align: center;
+  background-color: #FFE0E0;
+  color: black;
+  padding: 8px;
 }
 
 .entry:first-child {
   border-left: none;
 }
 
-.entry img {
-  position: absolute;
-  left: 0;
-  opacity: 0.2;
-  height: 100%;
+.name {
+  font-size: 14px;
 }
 
-.entry div {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  color: black;
+.temperature {
+  font-size: 28px;
 }
 
-.period {
-  font-size: 11px;
+.wind {
+  font-size: 14px;
+  line-height: 1.2;
 }
 
-.temp {
-  font-size: 24px;
-}
-
-.cond, .wind {
-  font-size: 12px;
+.icon {
+  margin-top: 3px;
 }
 
 #map {
   position: absolute;
   width: 100%;
-  top: 90px;
+  top: 180px;
   bottom: 0px;;
+}
+
+@media screen and (min-device-width: 480px) {
+  #bar {
+    height: 196px;
+  }
+
+  #map {
+    top: 196px;
+  }
+}
+
+@media screen and (min-width: 640px) {
+  .entry {
+    width: 25%;
+  }
+
+  @media screen and (min-width: 800px) {
+    .entry {
+      width: 20%;
+    }
+
+    @media screen and (min-width: 960px) {
+      .entry {
+        width: 16.666%;
+      }
+
+      @media screen and (min-width: 1120px) {
+        .entry {
+          width: 14.286%;
+        }
+      }
+    }
+  }
 }
