@@ -49,12 +49,20 @@ const initializeMap = () => {
   fullExtentButton = createMapButton(map, 'full-extent', 'Return to location', () => map.setView(location, 6));
 };
 
+const getForecastEntries = () => [...document.getElementById('bar').childNodes].map(c => c.querySelector('div'));
+
 const updateForecast = async () => {
   const f = await forecastService.fetch(location);
-  document.getElementById('header').innerHTML = f.placeName;
+  document.getElementById('header').innerHTML = f.placeName || 'Forecast not available';
+
+  if (!f.forecast) {
+    getForecastEntries().forEach(e => { e.style.visibility = 'hidden' });
+    return;
+  }
 
   for (let i = 0; i < f.forecast.length; i++) {
-    const entry = document.getElementById(`forecast${i}`);
+    const entry = document.getElementById(`forecast${i}`).querySelector('div');
+    entry.style.visibility = 'visible';
     entry.querySelector('.name').innerHTML = f.forecast[i].name;
     entry.querySelector('.temperature').innerHTML = `&nbsp;${f.forecast[i].temperature}°`;
     entry.querySelector('.wind').innerHTML = f.forecast[i].wind;
@@ -62,6 +70,11 @@ const updateForecast = async () => {
     const icon = entry.querySelector('.icon');
     icon.src = f.forecast[i].icon;
     icon.title = f.forecast[i].description;
+    icon.style.display = 'inline';
+
+    const desc = entry.querySelector('.desc');
+    desc.innerHTML = f.forecast[i].description;
+    desc.style.display = 'none';
   }
 };
 
@@ -82,5 +95,17 @@ const goToUserLocation = async () => {
 
   return false;
 };
+
+const descriptionTouch = (e) => {
+  const parent = e.target.parentNode;
+  const sibling = e.target.className === 'icon' ? parent.querySelector('.desc') :  parent.querySelector('.icon');
+  e.target.style.display = 'none';
+  sibling.style.display = 'inline';
+};
+
+getForecastEntries().forEach(e => {
+  e.querySelector('.icon').addEventListener('click', descriptionTouch);
+  e.querySelector('.desc').addEventListener('click', descriptionTouch);
+});
 
 goToUserLocation();

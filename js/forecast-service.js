@@ -15,17 +15,24 @@ const fetchPlaceName = async (location) => {
 
   const feature = {};
   json.results.forEach(f => { feature[f.layerName] = f.layerName == 'County or Equivalent' ? f.attributes.GNIS_NAME : f.value });
-
-  const place = feature['Incorporated Place'] || feature['Minor Civil Division'] || feature['Native American Area'] || feature['County or Equivalent'];
   const state = feature['State or Territory High-res'];
 
+  if (!state) {
+    return;
+  }
+
+  const place = feature['Incorporated Place'] || feature['Minor Civil Division'] || feature['Native American Area'] || feature['County or Equivalent'] || 'Unnamed location';
   return `${place}, ${state}`;
 };
 
 const fetchCurrent = async (location) => {
   let json = await fetchJson(`${forecastUrl}/points/${location.lat},${location.lng}/stations`);
-  const station = json.features[0].properties.stationIdentifier;
 
+  if (!json.features) {
+    return;
+  }
+
+  const station = json.features[0].properties.stationIdentifier;
   json = await fetchJson(`${forecastUrl}/stations/${station}/observations`);
   const current = json.features[0].properties;
   const speed = Math.round(current.windSpeed.value * 2.2369356);
@@ -34,7 +41,7 @@ const fetchCurrent = async (location) => {
   return {
     name: 'Currently',
     temperature: Math.round(current.temperature.value * 1.8 + 32),
-    wind: `${direction[d]} ${speed}`,
+    wind: !speed ? 'Calm' : `${direction[d]} ${speed}`,
     icon: current.icon,
     description: current.textDescription
   }
@@ -42,6 +49,11 @@ const fetchCurrent = async (location) => {
 
 const fetchForecast = async (location) => {
   const json = await fetchJson(`${forecastUrl}/points/${location.lat},${location.lng}/forecast`);
+
+  if (!json.properties) {
+    return;
+  }
+
   const period = json.properties.periods;
   const response = [];
 
@@ -65,6 +77,11 @@ const forecastService = {
     const placeName = await fetchPlaceName(location);
     const forecast = await fetchForecast(location);
     const current = await fetchCurrent(location);
+
+    if (!placeName || !forecast || !current) {
+      return {};
+    }
+
     forecast.unshift(current);
     return { placeName, forecast };
   }
