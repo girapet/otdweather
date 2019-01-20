@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
+  <style>
+    /* sharp converter does not understand @import or hsl colors */
+
+    #sky {
+      fill: #A1CCF7;
+    }
+
+    #sun {
+      fill: #FBFB40;
+    }
+
+    #cloud {
+      fill: #FFFFFF;
+    }
+
+    #ground {
+      fill: #00A040;
+    }
+
+    #wall {
+      fill: #604040;
+    }
+  </style>
+  <defs>
+    <filter id="sun-glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feMorphology id="sun-dilate" result="dilateOut" in="SourceGraphic" operator="dilate" radius="8" />
+      <feGaussianBlur id="sun-blur" result="blurOut" in="dilateOut" stdDeviation="16" />
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+    </filter>
+    <filter id="cloud-glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feColorMatrix type="matrix" values="0.7 0 0 0 0  0 0.7 0 0 0  0 0 0.7 0 0  0 0 0 0.5 0" result="saturateOut" in="SourceGraphic"/>
+      <feMorphology id="cloud-dilate" result="dilateOut" in="saturateOut" operator="dilate" radius="8" />
+      <feGaussianBlur id="cloud-blur" result="blurOut" in="dilateOut" stdDeviation="8" />
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+    </filter>
+  </defs>
+  <rect id="sky" x="0" y="0" width="512" height="512" />
+  <!--<path id="face" d="M 0 0 L 512 0 L 512 512 L 0 512 z M 256 256 m 0 -176 a -176 -176 0 1 0 0.001 0 z m 0 64 z a 112 112 0 1 1 -0.001 0 z" /> -->
+  <circle id="sun" filter="url(#sun-glow)" r="64" cx="200" cy="180" />
+  <path id="cloud" filter="url(#cloud-glow)" d="M 240 320  a 48 48 0 0 1 0 -96  a 48 48 0 0 1 83.138 -48  a 48 48 0 0 1 96 0  a 48 48 0 0 1 83.138 48  a 48 48 0 0 1 0 96   z" />
+  <rect id="ground" x="0" y="384" width="512" height="128" />
+  <path id="wall" d="M 0 512 v -512 h 512 v 512 h -64 v -448 h -384 v 448 z "/>
+</svg>
