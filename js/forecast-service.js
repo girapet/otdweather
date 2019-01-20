@@ -2,13 +2,28 @@
 const forecastUrl = 'https://api.weather.gov';
 const direction = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
+const placeUrl = 'https://services.nationalmap.gov/arcgis/rest/services/WFS/govunits/MapServer/identify?layers=all&geometrytype=point&imagedisplay=10,10,96&tolerance=2&returnGeometry=false&f=json';
+
 const fetchJson = async (url) => {
   const response = await fetch(url);
   return await response.json();
 };
 
-const fetchCurrent = async (point) => {
-  let json = await fetchJson(`${forecastUrl}/points/${point}/stations`);
+const fetchPlaceName = async (location) => {
+  const extent = `${location.lng - 0.00001},${location.lat - 0.00001},${location.lng + 0.00001},${location.lat + 0.00001}`
+  const json = await fetchJson(`${placeUrl}&geometry=${location.lng},${location.lat}&mapextent=${extent}`);
+
+  const feature = {};
+  json.results.forEach(f => { feature[f.layerName] = f.layerName == 'County or Equivalent' ? f.attributes.GNIS_NAME : f.value });
+
+  const place = feature['Incorporated Place'] || feature['Minor Civil Division'] || feature['Native American Area'] || feature['County or Equivalent'];
+  const state = feature['State or Territory High-res'];
+
+  return `${place}, ${state}`;
+};
+
+const fetchCurrent = async (location) => {
+  let json = await fetchJson(`${forecastUrl}/points/${location.lat},${location.lng}/stations`);
   const station = json.features[0].properties.stationIdentifier;
 
   json = await fetchJson(`${forecastUrl}/stations/${station}/observations`);
@@ -25,8 +40,8 @@ const fetchCurrent = async (point) => {
   }
 };
 
-const fetchForecast = async (point) => {
-  const json = await fetchJson(`${forecastUrl}/points/${point}/forecast`);
+const fetchForecast = async (location) => {
+  const json = await fetchJson(`${forecastUrl}/points/${location.lat},${location.lng}/forecast`);
   const period = json.properties.periods;
   const response = [];
 
@@ -47,11 +62,11 @@ const fetchForecast = async (point) => {
 
 const forecastService = {
   fetch: async (location) => {
-    const point = `${location.lat},${location.lng}`;
-    const forecast = await fetchForecast(point);
-    const current = await fetchCurrent(point);
+    const placeName = await fetchPlaceName(location);
+    const forecast = await fetchForecast(location);
+    const current = await fetchCurrent(location);
     forecast.unshift(current);
-    return forecast;
+    return { placeName, forecast };
   }
 };
 
