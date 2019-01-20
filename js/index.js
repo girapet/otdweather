@@ -52,8 +52,11 @@ const initializeMap = () => {
 const getForecastEntries = () => [...document.getElementById('bar').childNodes].map(c => c.querySelector('div'));
 
 const updateForecast = async () => {
+  const header = document.getElementById('header');
+  header.innerHTML = 'loading forecast...';
+
   const f = await forecastService.fetch(location);
-  document.getElementById('header').innerHTML = f.placeName || 'Forecast not available';
+  header.innerHTML = f.placeName || 'Forecast not available';
 
   if (!f.forecast) {
     getForecastEntries().forEach(e => { e.style.visibility = 'hidden' });
@@ -70,7 +73,7 @@ const updateForecast = async () => {
     const icon = entry.querySelector('.icon');
     icon.src = f.forecast[i].icon;
     icon.title = f.forecast[i].description;
-    icon.style.display = 'inline';
+    icon.style.display = 'inline-block';
 
     const desc = entry.querySelector('.desc');
     desc.innerHTML = f.forecast[i].description;
@@ -100,7 +103,7 @@ const descriptionTouch = (e) => {
   const parent = e.target.parentNode;
   const sibling = e.target.className === 'icon' ? parent.querySelector('.desc') :  parent.querySelector('.icon');
   e.target.style.display = 'none';
-  sibling.style.display = 'inline';
+  sibling.style.display = 'inline-block';
 };
 
 getForecastEntries().forEach(e => {
