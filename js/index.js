@@ -7,6 +7,47 @@ let location;
 let myLocationButton;
 let fullExtentButton;
 
+const getForecastEntries = () => [...document.getElementById('bar').childNodes].map(c => c.querySelector('div'));
+
+const updateForecast = async () => {
+  const header = document.getElementById('header');
+  header.innerHTML = 'loading forecast...';
+
+  const f = await forecastService.fetch(location);
+  header.innerHTML = f.placeName || 'Forecast not available';
+
+  if (!f.forecast) {
+    getForecastEntries().forEach(e => { e.style.visibility = 'hidden' });
+    return;
+  }
+
+  for (let i = 0; i < f.forecast.length; i++) {
+    const entry = document.getElementById(`forecast${i}`).querySelector('div');
+    entry.style.visibility = 'visible';
+    entry.querySelector('.name').innerHTML = f.forecast[i].name;
+    entry.querySelector('.temperature').innerHTML = `&nbsp;${f.forecast[i].temperature}°`;
+    entry.querySelector('.wind').innerHTML = f.forecast[i].wind;
+
+    const icon = entry.querySelector('.icon');
+    icon.src = f.forecast[i].icon;
+    icon.title = f.forecast[i].description;
+    icon.style.display = 'inline-block';
+
+    const desc = entry.querySelector('.desc');
+    desc.innerHTML = f.forecast[i].description;
+    desc.style.display = 'none';
+  }
+};
+
+const goToUserLocation = async () => {
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    map.setView(location, 6);
+    marker.setLatLng(location);
+    await updateForecast();
+  });
+};
+
 const setLocation = async (e) => {
   location = e.latlng;
   marker.setLatLng(location);
@@ -49,56 +90,6 @@ const initializeMap = () => {
   fullExtentButton = createMapButton(map, 'full-extent', 'Return to location', () => map.setView(location, 6));
 };
 
-const getForecastEntries = () => [...document.getElementById('bar').childNodes].map(c => c.querySelector('div'));
-
-const updateForecast = async () => {
-  const header = document.getElementById('header');
-  header.innerHTML = 'loading forecast...';
-
-  const f = await forecastService.fetch(location);
-  header.innerHTML = f.placeName || 'Forecast not available';
-
-  if (!f.forecast) {
-    getForecastEntries().forEach(e => { e.style.visibility = 'hidden' });
-    return;
-  }
-
-  for (let i = 0; i < f.forecast.length; i++) {
-    const entry = document.getElementById(`forecast${i}`).querySelector('div');
-    entry.style.visibility = 'visible';
-    entry.querySelector('.name').innerHTML = f.forecast[i].name;
-    entry.querySelector('.temperature').innerHTML = `&nbsp;${f.forecast[i].temperature}°`;
-    entry.querySelector('.wind').innerHTML = f.forecast[i].wind;
-
-    const icon = entry.querySelector('.icon');
-    icon.src = f.forecast[i].icon;
-    icon.title = f.forecast[i].description;
-    icon.style.display = 'inline-block';
-
-    const desc = entry.querySelector('.desc');
-    desc.innerHTML = f.forecast[i].description;
-    desc.style.display = 'none';
-  }
-};
-
-const goToUserLocation = async () => {
-  navigator.geolocation.getCurrentPosition(async (pos) => {
-    location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-
-    if (!map) {
-      initializeMap();
-    }
-    else {
-      map.setView(location, 6);
-      marker.setLatLng(location);
-    }
-
-    await updateForecast();
-  });
-
-  return false;
-};
-
 const descriptionTouch = (e) => {
   const parent = e.target.parentNode;
   const sibling = e.target.className === 'icon' ? parent.querySelector('.desc') :  parent.querySelector('.icon');
@@ -111,4 +102,12 @@ getForecastEntries().forEach(e => {
   e.querySelector('.desc').addEventListener('click', descriptionTouch);
 });
 
-goToUserLocation();
+// startup
+
+navigator.geolocation.getCurrentPosition(async (pos) => {
+  location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+  initializeMap();
+  await updateForecast();
+});
+
+setInterval(updateForecast, 900000);

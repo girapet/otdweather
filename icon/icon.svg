@@ -4,7 +4,7 @@
     /* sharp converter does not understand @import or hsl colors */
 
     #sky {
-      fill: #A1CCF7;
+      fill: #92BBF4;
     }
 
     #sun {
@@ -16,7 +16,7 @@
     }
 
     #ground {
-      fill: #00A040;
+      fill: #079950;
     }
 
     #wall {
@@ -37,7 +37,6 @@
     </filter>
   </defs>
   <rect id="sky" x="0" y="0" width="512" height="512" />
-  <!--<path id="face" d="M 0 0 L 512 0 L 512 512 L 0 512 z M 256 256 m 0 -176 a -176 -176 0 1 0 0.001 0 z m 0 64 z a 112 112 0 1 1 -0.001 0 z" /> -->
   <circle id="sun" filter="url(#sun-glow)" r="64" cx="200" cy="180" />
   <path id="cloud" filter="url(#cloud-glow)" d="M 240 320  a 48 48 0 0 1 0 -96  a 48 48 0 0 1 83.138 -48  a 48 48 0 0 1 96 0  a 48 48 0 0 1 83.138 48  a 48 48 0 0 1 0 96   z" />
   <rect id="ground" x="0" y="384" width="512" height="128" />

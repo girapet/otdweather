@@ -86,18 +86,21 @@ body {
   background-color: white;
   width: 30px;
   height: 30px;
-  border: solid 2px #c0c0c0;
+  border: solid 1px #808080;
   border-radius: 3px;
+  box-shadow: 2px 2px 4px #808080;
   background-repeat: no-repeat;
-  background-size: cover;
 }
 
 .my-location {
   background-image: url(images/baseline-my_location-24px.svg);
+  background-size: 28px;
+  background-position: left 1px top 1px;
 }
 
 .full-extent {
   background-image: url(images/baseline-zoom_out_map-24px.svg);
+  background-size: cover;
 }
 
 @media screen and (min-device-width: 480px) {
