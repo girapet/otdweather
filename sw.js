@@ -1,4 +1,4 @@
-const VERSION = '1.0.2';
+const VERSION = '1.0.3';
 
 const precacheFileNames = [
   './css/images/baseline-my_location-24px.svg',
