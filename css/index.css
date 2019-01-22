@@ -3,6 +3,24 @@ body {
   margin: 0;
 }
 
+#scrim {
+  position: absolute;
+  background-color: #FFE0E0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 1;
+  z-index: 1001;
+  box-sizing: border-box;
+  padding-top: 40px;
+  text-align: center;
+}
+
+#scrim.hide {
+  opacity: 0;
+  transition: opacity 2s linear;
+}
+
 #header {
   position: absolute;
   width: 100%;

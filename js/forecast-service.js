@@ -35,13 +35,21 @@ const fetchCurrent = async (location) => {
   const station = json.features[0].properties.stationIdentifier;
   json = await fetchJson(`${forecastUrl}/stations/${station}/observations`);
   const current = json.features[0].properties;
-  const speed = Math.round(current.windSpeed.value * 2.2369356);
-  const d = Math.floor((current.windDirection.value / 45 + 0.5) % 8);
+  let wind = '---';
+
+  if (current.windSpeed.value === 0) {
+    wind = 'Calm';
+  }
+  else if (current.windSpeed.value !== null || current.windDirection.value !== null) {
+    const d = Math.floor((current.windDirection.value / 45 + 0.5) % 8);
+    const s = Math.round(current.windSpeed.value * 2.2369356);
+    wind = `${direction[d]} ${speed}`;
+  }
 
   return {
     name: 'Currently',
     temperature: Math.round(current.temperature.value * 1.8 + 32),
-    wind: !speed ? 'Calm' : `${direction[d]} ${speed}`,
+    wind,
     icon: current.icon,
     description: current.textDescription
   }

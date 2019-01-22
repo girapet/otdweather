@@ -78,6 +78,7 @@ const initializeMap = () => {
   }).addTo(map);
 
   precipitationLayer.addTo(map);
+  
   marker = L.circleMarker(location, {
     color: '#802020',
     weight: 2,
@@ -104,10 +105,14 @@ getForecastEntries().forEach(e => {
 
 // startup
 
+const scrim = document.getElementById('scrim');
+
 navigator.geolocation.getCurrentPosition(async (pos) => {
+  scrim.className = 'hide';
   location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
   initializeMap();
   await updateForecast();
+  setInterval(updateForecast, 900000);
+}, () => {
+  scrim.innerHTML = 'This app needs your location.<br/><br/>Please enable location services on<br/>your device and allow access to<br/>your location if asked.';
 });
-
-setInterval(updateForecast, 900000);
