@@ -4,8 +4,6 @@ import forecastService from './forecast-service.js';
 let map;
 let marker;
 let location;
-let myLocationButton;
-let fullExtentButton;
 
 const getForecastEntries = () => [...document.getElementById('bar').childNodes].map(c => c.querySelector('div'));
 
@@ -78,7 +76,7 @@ const initializeMap = () => {
   }).addTo(map);
 
   precipitationLayer.addTo(map);
-  
+
   marker = L.circleMarker(location, {
     color: '#802020',
     weight: 2,
@@ -87,8 +85,8 @@ const initializeMap = () => {
     radius: 6
   }).addTo(map);
 
-  myLocationButton = createMapButton(map, 'my-location', 'Go to my location', goToUserLocation);
-  fullExtentButton = createMapButton(map, 'full-extent', 'Return to location', () => map.setView(location, 6));
+  createMapButton(map, 'my-location', 'Go to my location', goToUserLocation);
+  createMapButton(map, 'full-extent', 'Return to location', () => map.setView(location, 6));
 };
 
 const descriptionTouch = (e) => {

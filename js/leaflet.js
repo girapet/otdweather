@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* @preserve
  * Leaflet 1.4.0+Detached: 3337f36d2a2d2b33946779057619b31f674ff5dc.3337f36, a JS library for interactive maps. http://leafletjs.com
  * (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade

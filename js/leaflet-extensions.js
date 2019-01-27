@@ -37,7 +37,7 @@ L.ShingleLayer = L.Layer.extend({
     return this._isLoading;
   },
 
-  onAdd: function (map) {
+  onAdd: function () {
     if (!this._container) {
       this._container = L.DomUtil.create('div', 'leaflet-layer', this.getPane());
 
@@ -51,7 +51,7 @@ L.ShingleLayer = L.Layer.extend({
     this._update(true);
   },
 
-  onRemove: function (map) {
+  onRemove: function () {
     L.DomUtil.remove(this._container);
     this._container = null;
   },
@@ -76,13 +76,8 @@ L.ShingleLayer = L.Layer.extend({
     for (var i = 0; i < this._shingles.length; ++i) {
       var img = this._shingles[i];
       var scale = Math.pow(2, zoom - img.data.level);
-
       var nw = img.data.bounds.getNorthWest();
-      var se = img.data.bounds.getSouthEast();
-
       var position = map._latLngToNewLayerPoint(nw, zoom, center);
-      var size = map._latLngToNewLayerPoint(se, zoom, center)._subtract(position);
-
       L.DomUtil.setTransform(img, position, scale);
     }
   },
