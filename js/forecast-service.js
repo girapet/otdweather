@@ -82,9 +82,11 @@ const fetchForecast = async (location) => {
 
 const forecastService = {
   fetch: async (location) => {
-    const placeName = await fetchPlaceName(location);
-    const forecast = await fetchForecast(location);
-    const current = await fetchCurrent(location);
+    const [placeName, forecast, current] = await Promise.all([
+      fetchPlaceName(location),
+      fetchForecast(location),
+      fetchCurrent(location)
+    ]);
 
     if (!placeName || !forecast || !current) {
       return {};
