@@ -1,6 +1,8 @@
 ## Out-the-Door Weather
 Quick US weather for mobile devices
 
+Run it at https://girapet.github.io/otdweather
+
 ### Features
 * Starts up with map and forecast for the current device location.
 * Forecast shows temperature, wind speed and conditions (as an icon) for today and the next two days.
