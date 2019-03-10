@@ -2,27 +2,45 @@
 const forecastUrl = 'https://api.weather.gov';
 const direction = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
-const placeUrl = 'https://services.nationalmap.gov/arcgis/rest/services/WFS/govunits/MapServer/identify?layers=all&geometrytype=point&imagedisplay=10,10,96&tolerance=2&returnGeometry=false&f=json';
+const placeUrl = 'https://services.nationalmap.gov/arcgis/rest/services/WFS/govunits/MapServer/identify?layers=1,2,3,4,5,6,7&geometrytype=point&imagedisplay=100,100,96&tolerance=2&returnGeometry=false&f=json';
+
+let previousLocation = { lng: -180, lat: -90 };
 
 const fetchJson = async (url) => {
   const response = await fetch(url);
   return await response.json();
 };
 
+const roundToPlaces = (n, d) => Math.round(n * 10 ** d) / 10 ** d;
+
 const fetchPlaceName = async (location) => {
-  const extent = `${location.lng - 0.00001},${location.lat - 0.00001},${location.lng + 0.00001},${location.lat + 0.00001}`
-  const json = await fetchJson(`${placeUrl}&geometry=${location.lng},${location.lat}&mapextent=${extent}`);
-
-  const feature = {};
-  json.results.forEach(f => { feature[f.layerName] = f.layerName == 'County or Equivalent' ? f.attributes.GNIS_NAME : f.value });
-  const state = feature['State or Territory High-res'];
-
-  if (!state) {
-    return;
+  if (location.lng === previousLocation.lng && location.lat === previousLocation.lat) {
+    return previousLocation.name;
   }
 
-  const place = feature['Incorporated Place'] || feature['Minor Civil Division'] || feature['Native American Area'] || feature['County or Equivalent'] || 'Unnamed location';
-  return `${place}, ${state}`;
+  const lng = roundToPlaces(location.lng, 6);
+  const lat = roundToPlaces(location.lat, 6);
+  const minLng = roundToPlaces(lng - 0.0001, 6);
+  const minLat = roundToPlaces(lat - 0.0001, 6);
+  const maxLng = roundToPlaces(lng + 0.0001, 6);
+  const maxLat = roundToPlaces(lat + 0.0001, 6);
+  const json = await fetchJson(`${placeUrl}&geometry=${lng},${lat}&mapextent=${minLng},${minLat},${maxLng},${maxLat}`);
+
+  let name = '[unknown location]';
+
+  if (json.results) {
+    const feature = {};
+    json.results.forEach(f => { feature[f.layerName] = f.layerName == 'County or Equivalent' ? f.attributes.GNIS_NAME : f.value });
+    const state = feature['State or Territory Low-res'];
+  
+    if (state) {
+      const place = feature['Incorporated Place'] || feature['Minor Civil Division'] || feature['Native American Area'] || feature['County or Equivalent'] || 'Unnamed location';
+      name = `${place}, ${state}`;
+    }
+  }
+
+  previousLocation = { ...location, name };
+  return name;
 };
 
 const fetchCurrent = async (location) => {
