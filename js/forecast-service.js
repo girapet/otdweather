@@ -2,7 +2,7 @@
 const forecastUrl = 'https://api.weather.gov';
 const direction = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
-const placeUrl = 'https://services.nationalmap.gov/arcgis/rest/services/WFS/govunits/MapServer/identify?layers=1,2,3,4,5,6,7&geometrytype=point&imagedisplay=100,100,96&tolerance=2&returnGeometry=false&f=json';
+const placeUrl = 'https://carto.nationalmap.gov/wfs/rest/services/govunits/MapServer/identify?layers=all:19,20,21,22,23,29,35,37&geometrytype=esriGeometryPoint&sr=4326&imagedisplay=100,100,96&tolerance=2&returnGeometry=false&f=json';
 
 let previousLocation = { lng: -180, lat: -90 };
 
@@ -31,10 +31,10 @@ const fetchPlaceName = async (location) => {
   if (json.results) {
     const feature = {};
     json.results.forEach(f => { feature[f.layerName] = f.layerName == 'County or Equivalent' ? f.attributes.GNIS_NAME : f.value });
-    const state = feature['State or Territory Low-res'];
+    const state = feature['State or Territory Large-Scale'];
   
     if (state) {
-      const place = feature['Incorporated Place'] || feature['Minor Civil Division'] || feature['Native American Area'] || feature['County or Equivalent'] || 'Unnamed location';
+      const place = feature['Incorporated Place'] || feature['Unincorporated Place'] || feature['Minor Civil Division'] || feature['Native American Area'] || feature['National Park'] || feature['Military Reserve'] || feature['County or Equivalent'] || 'Unnamed location';
       name = `${place}, ${state}`;
     }
   }
