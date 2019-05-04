@@ -14,6 +14,6 @@ Run it at https://girapet.github.io/otdweather
 * _Bottom map button_ - zoom to the set forecast location.
 
 ### Sources
-* __Place Names__ - US Geological Survey, [The National Map](https://nationalmap.gov/small_scale/), [Governmental Unit Boundaries](https://carto.nationalmap.gov/wfs/rest/services/govunits/MapServer) map service
+* __Place Names__ - US Census Bureau, [TIGERweb](https://tigerweb.geo.census.gov/tigerwebmain/TIGERweb_restmapservice.html)
 * __Forecast__ - National Weather Service, [Forecast API](https://forecast-v3.weather.gov/documentation)
 * __Precipitation layer__ - National Oceanic and Atmospheric Administration, [nowCOAST™](https://nowcoast.noaa.gov/) web mapping portal, [NEXRAD](https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer) map service

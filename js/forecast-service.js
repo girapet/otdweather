@@ -2,7 +2,10 @@
 const forecastUrl = 'https://api.weather.gov';
 const direction = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
-const placeUrl = 'https://carto.nationalmap.gov/wfs/rest/services/govunits/MapServer/identify?layers=all:19,20,21,22,23,29,35,37&geometrytype=esriGeometryPoint&sr=4326&imagedisplay=100,100,96&tolerance=2&returnGeometry=false&f=json';
+const identifySite = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb';
+const identifyParams = 'geometrytype=esriGeometryPoint&sr=4326&imagedisplay=100,100,96&tolerance=2&returnGeometry=false&f=json';
+const stateCountyUrl = `${identifySite}/State_County/MapServer/identify?layers=all:0,1&${identifyParams}`;
+const placeUrl = `${identifySite}/Places_CouSub_ConCity_SubMCD/MapServer/identify?layers=all:1,4${identifyParams}`;
 
 let previousLocation = { lng: -180, lat: -90 };
 
@@ -24,23 +27,29 @@ const fetchPlaceName = async (location) => {
   const minLat = roundToPlaces(lat - 0.0001, 6);
   const maxLng = roundToPlaces(lng + 0.0001, 6);
   const maxLat = roundToPlaces(lat + 0.0001, 6);
-  const json = await fetchJson(`${placeUrl}&geometry=${lng},${lat}&mapextent=${minLng},${minLat},${maxLng},${maxLat}`);
+  const pointParams = `geometry=${lng},${lat}&mapextent=${minLng},${minLat},${maxLng},${maxLat}`;
 
   let name = '[unknown location]';
+  let json = await fetchJson(`${stateCountyUrl}&${pointParams}`);
 
   if (json.results) {
     const feature = {};
-    json.results.forEach(f => { feature[f.layerName] = f.layerName == 'County or Equivalent' ? f.attributes.GNIS_NAME : f.value });
-    const state = feature['State or Territory Large-Scale'];
-  
-    if (state) {
-      const place = feature['Incorporated Place'] || feature['Unincorporated Place'] || feature['Minor Civil Division'] || feature['Native American Area'] || feature['National Park'] || feature['Military Reserve'] || feature['County or Equivalent'] || 'Unnamed location';
-      name = `${place}, ${state}`;
+    json.results.forEach(f => { feature[f.layerName] = f.layerName == 'States' ? f.attributes.STUSAB : f.value });
+
+    if (feature['States']) {
+      json = await fetchJson(`${placeUrl}&${pointParams}`);
+
+      if (json.results) {
+        json.results.forEach(f => { feature[f.layerName] = f.value });
+      }
+
+      const place = feature['Incorporated Places'] || feature['County Subdivisions'] || feature['Counties'] || 'Unnamed location';
+      name = `${place}, ${feature['States']}`;
     }
   }
 
-  previousLocation = { ...location, name };
-  return name;
+   previousLocation = { lat, lng, name };
+   return name;
 };
 
 const fetchCurrent = async (location) => {
