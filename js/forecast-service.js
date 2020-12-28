@@ -5,7 +5,7 @@ const direction = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 const identifySite = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb';
 const identifyParams = 'geometrytype=esriGeometryPoint&sr=4326&imagedisplay=100,100,96&tolerance=2&returnGeometry=false&f=json';
 const stateCountyUrl = `${identifySite}/State_County/MapServer/identify?layers=all:0,1&${identifyParams}`;
-const placeUrl = `${identifySite}/Places_CouSub_ConCity_SubMCD/MapServer/identify?layers=all:1,4${identifyParams}`;
+const placeUrl = `${identifySite}/Places_CouSub_ConCity_SubMCD/MapServer/identify?layers=all:1,4&${identifyParams}`;
 
 let previousLocation = { lng: -180, lat: -90 };
 
