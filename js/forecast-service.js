@@ -52,8 +52,19 @@ const fetchPlaceName = async (location) => {
    return name;
 };
 
-const fetchCurrent = async (location) => {
-  let json = await fetchJson(`${forecastUrl}/points/${location.lat},${location.lng}/stations`);
+const fetchGridPoint = async (location) => {
+  const json = await fetchJson(`${forecastUrl}/points/${location.lat},${location.lng}`);
+
+  if (!json.properties) {
+    return;
+  }
+
+  const { gridId, gridX, gridY } = json.properties;
+  return `${gridId}/${gridX},${gridY}`;
+};
+
+const fetchCurrent = async (gridPoint) => {
+  let json = await fetchJson(`${forecastUrl}/gridpoints/${gridPoint}/stations`);
 
   if (!json.features) {
     return;
@@ -82,8 +93,8 @@ const fetchCurrent = async (location) => {
   }
 };
 
-const fetchForecast = async (location) => {
-  const json = await fetchJson(`${forecastUrl}/points/${location.lat},${location.lng}/forecast`);
+const fetchForecast = async (gridPoint) => {
+  const json = await fetchJson(`${forecastUrl}/gridpoints/${gridPoint}/forecast`);
 
   if (!json.properties) {
     return;
@@ -109,10 +120,16 @@ const fetchForecast = async (location) => {
 
 const forecastService = {
   fetch: async (location) => {
+    const gridPoint = await fetchGridPoint(location);
+
+    if (!gridPoint) {
+      return {};
+    }
+
     const [placeName, forecast, current] = await Promise.all([
       fetchPlaceName(location),
-      fetchForecast(location),
-      fetchCurrent(location)
+      fetchForecast(gridPoint),
+      fetchCurrent(gridPoint)
     ]);
 
     if (!placeName || !forecast || !current) {
