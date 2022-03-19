@@ -72,7 +72,9 @@ const fetchCurrent = async (gridPoint) => {
 
   const station = json.features[0].properties.stationIdentifier;
   json = await fetchJson(`${forecastUrl}/stations/${station}/observations`);
-  const current = json.features[0].properties;
+  const observations = json.features.map(f => f.properties).sort((a, b) => a.timestamp > b.timestamp ? -1 : 1);
+  const current = observations.filter(o => o.temperature.value !== null)[0];
+  
   let wind = '---';
 
   if (current.windSpeed.value === 0) {
