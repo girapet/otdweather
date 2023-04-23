@@ -1,9 +1,26 @@
 const maxLayers = 7;
 const intervalMilliseconds = 600000;
 
-const nowCoastUrl = 'https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer';
-const nowCoastParams = 'layers=3&bbox={minx}%2C{miny}%2C{maxx}%2C{maxy}&size={sx}%2C{sy}&f=image&format=png&transparent=true';
-const getTemplate = (t) => `${nowCoastUrl}/export?time=${t}&${nowCoastParams}`;
+const toQuery = (params) => {
+  return Object.keys(params).map((k) => `${k}=${params[k]}`).join('&');
+};
+
+const nowCoastUrl = 'https://nowcoast.noaa.gov/geoserver/weather_radar/wms';
+const nowCoastParams = {
+  SERVICE: 'WMS',
+  VERSION: '1.3.0',
+  REQUEST: 'GetMap',
+  FORMAT: 'image%2Fpng8',
+  TRANSPARENT: 'true',
+  LAYERS: 'base_reflectivity_mosaic',
+  STYLES: '',
+  CRS: 'EPSG%3A3857',
+  WIDTH: '{sx}',
+  HEIGHT: '{sy}',
+  BBOX: '{minx}%2C{miny}%2C{maxx}%2C{maxy}'
+};
+const getTemplate = (t) => `${nowCoastUrl}?${toQuery(nowCoastParams)}&time=${(new Date(t)).toISOString()}`;
+
 const layerOptions = {
   attribution: '© <a href="https://www.weather.gov">NWS</a>',
   opacity: 0.35
