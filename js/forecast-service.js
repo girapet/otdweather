@@ -16,20 +16,23 @@ const fetchJson = async (url) => {
 
 const roundToPlaces = (n, d) => Math.round(n * 10 ** d) / 10 ** d;
 
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const fetchPlaceName = async (location) => {
-  if (location.lng === previousLocation.lng && location.lat === previousLocation.lat) {
+  const lng = roundToPlaces(location.lng, 6);
+  const lat = roundToPlaces(location.lat, 6);
+
+  if (lng === previousLocation.lng && lat === previousLocation.lat) {
     return previousLocation.name;
   }
 
-  const lng = roundToPlaces(location.lng, 6);
-  const lat = roundToPlaces(location.lat, 6);
   const minLng = roundToPlaces(lng - 0.0001, 6);
   const minLat = roundToPlaces(lat - 0.0001, 6);
   const maxLng = roundToPlaces(lng + 0.0001, 6);
   const maxLat = roundToPlaces(lat + 0.0001, 6);
   const pointParams = `geometry=${lng},${lat}&mapextent=${minLng},${minLat},${maxLng},${maxLat}`;
 
-  let name = '[unknown location]';
+  let name;
   let json = await fetchJson(`${stateCountyUrl}&${pointParams}`);
 
   if (json.results) {
@@ -128,14 +131,30 @@ const forecastService = {
       return {};
     }
 
-    const [placeName, forecast, current] = await Promise.all([
+    let [placeName, forecast, current] = await Promise.all([
       fetchPlaceName(location),
       fetchForecast(gridPoint),
       fetchCurrent(gridPoint)
     ]);
-
+    
     if (!placeName || !forecast || !current) {
-      return {};
+      await wait(2000);
+
+      if (!placeName) {
+        placeName = await fetchPlaceName(location);
+      }
+
+      if (!forecast) {
+        forecast = await fetchForecast(gridPoint);
+      }
+
+      if (!current) {
+        current = await fetchCurrent(gridPoint);
+      }
+
+      if (!placeName || !forecast || !current) {
+        return {};
+      }
     }
 
     forecast.unshift(current);
