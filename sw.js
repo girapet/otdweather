@@ -1,6 +1,6 @@
 /* eslint-env serviceworker */
 
-const VERSION = '1.0.12';
+const VERSION = '1.0.13';
 
 const precacheFileNames = [
   './css/images/baseline-my_location-24px.svg',
@@ -14,6 +14,7 @@ const precacheFileNames = [
   './icon/icon256.png',
   './icon/icon384.png',
   './icon/icon512.png',
+  './icon/screenshot.jpg',
   './js/forecast-service.js',
   './js/index.js',
   './js/leaflet-extensions.js',

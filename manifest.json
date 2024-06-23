@@ -46,5 +46,21 @@
       "type": "image/png",
       "sizes": "512x512"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "icon/screenshot_wide.jpg",
+      "sizes": "1483x878",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "OTD Weather"
+    },
+    {
+      "src": "icon/screenshot.jpg",
+      "sizes": "625x872",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "OTD Weather"
+    }
   ]
 }
