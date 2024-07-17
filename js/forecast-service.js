@@ -115,7 +115,7 @@ const fetchForecast = async (gridPoint) => {
       name: period[i].name,
       temperature: period[i].temperature,
       wind: `${period[i].windDirection} ${speed}`,
-      icon: `${forecastUrl}${period[i].icon}`,
+      icon: `${period[i].icon}`,
       description: period[i].shortForecast
     });
   }
