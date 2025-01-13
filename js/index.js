@@ -39,10 +39,13 @@ const updateForecast = async () => {
 
 const goToUserLocation = async () => {
   navigator.geolocation.getCurrentPosition(async (pos) => {
-    location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    const { latitude: lat, longitude: lng } = pos.coords;
+    location = { lat, lng };
     map.setView(location, 6);
     marker.setLatLng(location);
     await updateForecast();
+
+    localStorage.removeItem("location");
   });
 };
 
@@ -50,6 +53,9 @@ const setLocation = async (e) => {
   location = e.latlng;
   marker.setLatLng(location);
   await updateForecast();
+
+  const { lat, lng } = location;
+  localStorage.setItem("location", JSON.stringify({ lat, lng }));
 };
 
 const createMapButton = (map, className, title, handler) => {
@@ -107,7 +113,17 @@ const scrim = document.getElementById('scrim');
 
 navigator.geolocation.getCurrentPosition(async (pos) => {
   scrim.className = 'hide';
-  location = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+
+  const storedLocation = localStorage.getItem("location");
+
+  if (storedLocation) {
+    location = JSON.parse(storedLocation);
+  }
+  else {
+    const { latitude: lat, longitude: lng } = pos.coords;
+    location = { lat, lng };
+  }
+  
   initializeMap();
   await updateForecast();
   setInterval(updateForecast, 900000);
