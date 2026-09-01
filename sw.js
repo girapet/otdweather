@@ -1,6 +1,6 @@
 /* eslint-env serviceworker */
 
-const VERSION = '1.0.15';
+const VERSION = '1.0.16';
 
 const precacheFileNames = [
   './css/images/baseline-my_location-24px.svg',

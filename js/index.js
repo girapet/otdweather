@@ -77,7 +77,7 @@ const initializeMap = () => {
   map = L.map('map', { fadeAnimation: false, zoomControl: false }).setView(location, 6);
   map.on('click', setLocation);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_2qk1_1_9f05369cdc1f6aa66505951b', {
     attribution: '© <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors, © <a href="https://carto.com">CARTO</a>'
   }).addTo(map);
 
